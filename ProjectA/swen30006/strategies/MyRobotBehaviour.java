@@ -14,13 +14,14 @@ package stratagies;
 import automail.StorageTube;
 
 public class MyRobotBehaviour implements IRobotBehaviour{
+  boolean newPriority;
 
   // When this function is true, the robot wil return to the mail room
   public boolean returnToMailRoom(StorageTube tube){
     return
   }
 
-  // indicate arrival of priority mail item
+  // flag and record arrival of new priority item
   // simple function copied direct from example
   public void priorityArrival(int priority){
     // Record that a new one has arrived
