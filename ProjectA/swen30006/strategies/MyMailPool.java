@@ -87,10 +87,18 @@ public class MyMailPool implements IMailPool{
     }
   }
 
-  // Returns the best MailItem to deliver
-  // currently not implemented
+  // Returns the latest nonPriority mailItem from the range of floors specified
   public MailItem getBestMail(int FloorFrom, int FloorTo){
-    return null;
+    //Iterate through floors in range
+    for (int floor = FloorFrom; floor <= FloorTo; floor++){
+      //iterate through nonPriority mail to find the latest piece on the floor
+      for (int i = 0; i < nonPriorityQueue.size(); i++){
+        if (nonPriorityQueue.get(i).getDestFloor() == floor){
+          return nonPriorityQueue.remove(i);
+        }
+      }
+    }
+    return getNonPriorityMail();
   }
 
 

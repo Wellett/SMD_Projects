@@ -13,18 +13,24 @@ package strategies;
 
 import automail.StorageTube;
 import automail.Clock;
+import automail.MailItem;
 import automail.PriorityMailItem;
 import exceptions.TubeFullException;
+import automail.Building;
 
 
 public class MyRobotBehaviour implements IRobotBehaviour{
   private static final int TUBE_SIZE = 4;
+  private static final int FLOORS = Building.FLOORS;
+  private static final int LOWEST_FLOOR = Building.LOWEST_FLOOR;
   int newPriority;
+  int deliveryFloor;
 
 
   //CONSTRUCTOR
   public MyRobotBehaviour(){
     newPriority = 0;
+    deliveryFloor = 1;
   }
 
   // flag and record arrival of new priority item
@@ -40,12 +46,9 @@ public class MyRobotBehaviour implements IRobotBehaviour{
       if (tube.getSize() > 0){
         if (tube.peek() instanceof PriorityMailItem){
           return false;
-          //int priority = ((PriorityMailItem)tube.peek()).getPriorityLevel();
         }
-        else{
-          //if (newPriority > 10){
-            return true;
-          //}
+        else if (newPriority > 10){
+          return true;
         }
       }
     return false;
@@ -58,8 +61,9 @@ public class MyRobotBehaviour implements IRobotBehaviour{
 		try{
 			// Start afresh
 			newPriority = 0;
+
 			while(!tube.isEmpty()) {
-				mailPool.returnToPool(tube.pop());
+				mailPool.addToPool(tube.pop());
 			}
 			// Check for a top priority item
 			if (mailPool.getPriorityPoolSize() > 0) {
@@ -69,9 +73,17 @@ public class MyRobotBehaviour implements IRobotBehaviour{
 				return true;
 			}
 			else{
-				// Get as many nonpriority items as available or as fit
-				while(tube.getSize() < TUBE_SIZE && mailPool.getNonPriorityPoolSize() > 0) {
-					tube.addItem(mailPool.getNonPriorityMail());
+        //Take most urgent non-priority mail
+
+				while(tube.getSize()<TUBE_SIZE && mailPool.getNonPriorityPoolSize()>0){
+          //collect latest piece of mail
+          if (tube.getSize() == 0){
+            tube.addItem(mailPool.getNonPriorityMail());
+            deliveryFloor = tube.peek().getDestFloor();
+          }
+          else {
+            tube.addItem(getCloseMail(mailPool));
+          }
 				}
 				return (tube.getSize() > 0);
 			}
@@ -81,4 +93,17 @@ public class MyRobotBehaviour implements IRobotBehaviour{
 		}
 		return false;
 	}
+
+  private MailItem getCloseMail(IMailPool mailPool){
+    MailItem bestMail = null;
+    //try lower floors first
+    for (int topfloor = deliveryFloor; topfloor <= FLOORS; topfloor ++){
+      bestMail = mailPool.getBestMail(LOWEST_FLOOR, topfloor);
+      if (bestMail != null){
+        return bestMail;
+      }
+    }
+    //fail safe
+    return mailPool.getNonPriorityMail();
+  }
 }
