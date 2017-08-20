@@ -78,6 +78,7 @@ public class MyRobotBehaviour implements IRobotBehaviour{
 				while(tube.getSize()<TUBE_SIZE && mailPool.getNonPriorityPoolSize()>0){
           //collect latest piece of mail
           if (tube.getSize() == 0){
+
             tube.addItem(mailPool.getNonPriorityMail());
             deliveryFloor = tube.peek().getDestFloor();
           }
