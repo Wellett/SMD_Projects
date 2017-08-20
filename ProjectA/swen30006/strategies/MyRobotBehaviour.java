@@ -95,6 +95,8 @@ public class MyRobotBehaviour implements IRobotBehaviour{
 		return false;
 	}
 
+//attempt to deliver mail in batches
+
   private MailItem getCloseMail(IMailPool mailPool){
     MailItem bestMail = null;
     //try lower floors first
