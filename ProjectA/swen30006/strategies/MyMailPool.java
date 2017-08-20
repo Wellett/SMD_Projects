@@ -77,6 +77,16 @@ public class MyMailPool implements IMailPool{
     }
   }
 
+  //adds returned mail items to the front of the queue
+  public void returnToPool(MailItem mailItem){
+    if (mailItem instanceof PriorityMailItem){
+      addToPool(mailItem);
+    }
+    else{
+      nonPriorityQueue.addFirst(mailItem);
+    }
+  }
+
   // Returns the best MailItem to deliver
   // currently not implemented
   public MailItem getBestMail(int FloorFrom, int FloorTo){

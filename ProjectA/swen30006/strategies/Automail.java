@@ -5,19 +5,23 @@ import automail.Robot;
 
 public class Automail {
 
-    public Robot robot;
-    public IMailPool mailPool;
+	private static final int TEST = 1;
+  public Robot robot;
+  public IMailPool mailPool;
+
 
     public Automail(IMailDelivery delivery) {
     	// Swap between simple provided strategies and your strategies here
+			IRobotBehaviour robotBehaviour;
 
-    	/** Initialize the MailPool */
-    	//mailPool = new SimpleMailPool();
-    	mailPool = new MyMailPool();
-
-        /** Initialize the RobotAction */
-    	IRobotBehaviour robotBehaviour = new SimpleRobotBehaviour();
-    	// IRobotBehaviour robotBehaviour = new MyRobotBehaviour();
+			if (TEST > 0){
+				mailPool = new MyMailPool();
+				robotBehaviour = new MyRobotBehaviour();
+			}
+			else {
+				mailPool = new SimpleMailPool();
+				robotBehaviour = new SimpleRobotBehaviour();
+			}
 
     	/** Initialize robot */
     	robot = new Robot(robotBehaviour, delivery, mailPool);
