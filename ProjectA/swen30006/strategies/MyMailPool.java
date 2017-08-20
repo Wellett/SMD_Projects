@@ -19,12 +19,12 @@ public class MyMailPool implements IMailPool{
   // Implement linked list as a queue for non priority mail items
   private LinkedList<MailItem> nonPriorityQueue;
   // Implement linked list for Priority mail
-  private LinkedList<MailItem> priorityQueue;
+  private LinkedList<PriorityMailItem> priorityQueue;
 
   // CONSTRUCTOR
   public MyMailPool(){
     nonPriorityQueue  = new LinkedList<MailItem>();
-    priorityQueue = new LinkedList<MailItem>();
+    priorityQueue = new LinkedList<PriorityMailItem>();
   }
 
   //Returns the number of priority mail items in the pool
@@ -40,9 +40,19 @@ public class MyMailPool implements IMailPool{
   //Adds an item to the mail pool
   public void addToPool(MailItem mailItem){
     if (mailItem instanceof PriorityMailItem){
-      // Add to priority pool
-      // currently FIFO, improve later
-      priorityQueue.addLast(mailItem);
+      // Cast mailItem to PriorityMailItem and check priority
+      PriorityMailItem newPriority = (PriorityMailItem)mailItem;
+      int priority = newPriority.getPriorityLevel();
+      // Iteratively compare priority to other priority items
+      for (int i = 0; i < priorityQueue.size(); i ++){
+        int comparePriority = (priorityQueue.get(i)).getPriorityLevel();
+        if (priority > comparePriority){
+          // add new item before lower priorities, after others
+          priorityQueue.add(i, newPriority);
+          return; //Exit method
+        }
+      }
+      priorityQueue.addLast(newPriority);
     }
     else {
       nonPriorityQueue.addLast(mailItem);
@@ -72,4 +82,6 @@ public class MyMailPool implements IMailPool{
   public MailItem getBestMail(int FloorFrom, int FloorTo){
     return null;
   }
+
+
 }
